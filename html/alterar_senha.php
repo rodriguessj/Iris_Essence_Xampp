@@ -1,60 +1,55 @@
 <?php
-    // Inicia a sessão do usuário
-    session_start();
-    require_once 'conexao.php';
-    
-    //GARANTE QUE O USUARIO ESTEJA LOGADO
-    if(!isset($_SESSION['id_usuario'])){
-        echo "<script>alert('Acesso Negado!);window.location.href='login.php'</script>";
-        exit();
-    }
-    
-    if($_SERVER["REQUEST_METHOD"] == "POST"){
-        $id_usuario = $_SESSION['id_usuario'];
-        $nova_senha= // Dados enviados via formulário
-        $_POST['nova_senha'];
-        $confirmar_senha = // Dados enviados via formulário
-        $_POST['confirmar_senha'];
-        
-        if($nova_senha !==$confirmar_senha){
-            echo "<script>alert('As senhas não coincidem!');</script>";
-        }elseif(strlen($nova_senha)<8){
-            echo "<script>alert('A senha deve ter pelo menos 8 caracteres!');</script>";
-        }elseif($nova_senha === "temp123"){
-            echo "<script>alert('Escolha uma senha diferente de temporária!');</script>";
-        }else{
-            $senha_hash = password_hash($nova_senha, PASSWORD_DEFAULT);
-            
-            //ATUALIZA A SENHA E REMOVE O STATUS DE TEMPORÁRIA
-            
-            $sql = "UPDATE usuario SET senha = :senha, senha_temporaria = FALSE
-            WHERE id_usuario = :id";
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':senha', $senha_hash);
-            $stmt->bindParam(':id', $id_usuario);
-            
-            if($stmt->execute()){
-                session_destroy(); //FINALIZA A SESSÃO
-                echo "<script>alert('Senha alterada com sucesso! Faça login novamente.');window.location.href='login.php';</script>";
-                
-            }else{
-                echo "<script>alert('Erro ao alterar a senha!');</script>";
-            }
+// Inicia a sessão do usuário
+session_start();
+require_once 'conexao.php';
+
+// Garante que o usuário esteja logado
+if (!isset($_SESSION['id_usuario'])) {
+    echo "<script>alert('Acesso Negado!'); window.location.href='login.php';</script>";
+    exit();
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $id_usuario = $_SESSION['id_usuario'];
+    $nova_senha = $_POST['nova_senha']; // Dados enviados via formulário
+    $confirmar_senha = $_POST['confirmar_senha']; // Dados enviados via formulário
+
+    if ($nova_senha !== $confirmar_senha) {
+        echo "<script>alert('As senhas não coincidem!');</script>";
+    } elseif (strlen($nova_senha) < 8) {
+        echo "<script>alert('A senha deve ter pelo menos 8 caracteres!');</script>";
+    } elseif ($nova_senha === "temp123") {
+        echo "<script>alert('Escolha uma senha diferente da senha temporária!');</script>";
+    } else {
+        $senha_hash = password_hash($nova_senha, PASSWORD_DEFAULT);
+
+        // Atualiza a senha e remove o status de temporária
+        $sql = "UPDATE usuario SET senha = :senha, senha_temporaria = 0 WHERE id_usuario = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':senha', $senha_hash);
+        $stmt->bindParam(':id', $id_usuario);
+
+        if ($stmt->execute()) {
+            session_destroy(); // Finaliza a sessão
+            echo "<script>alert('Senha alterada com sucesso! Faça login novamente.'); window.location.href='login.php';</script>";
+        } else {
+            echo "<script>alert('Erro ao alterar a senha!');</script>";
         }
     }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Íris &ssence - Beauty Clinic</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="../css/style.css">
-<script src="script.js"></script>
-<link rel="icon" href="../imgs/logo.jpg" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Íris &ssence - Beauty Clinic</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="script.js"></script>
+    <link rel="icon" href="../imgs/logo.jpg" type="image/x-icon">
 </head>
 <body class="cadastro-fundo">
 <header>
@@ -88,39 +83,38 @@
             <li><a href="../html/produtos.html">PRODUTOS</a></li>|
             <li><a href="../html/login.php">LOGIN</a></li>|
             <li><a href="../html/cadastro.html">CADASTRO</a></li>|
-
-            <div class="logout">
-                <form action = "logout.php" method= "POST">
-                <button type="submit">Logout</button>
-            </div>
+            <li>
+                <form action="logout.php" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-sm btn-danger">Logout</button>
+                </form>
+            </li>
         </ul>
     </nav>
 </header>
+
 <br>
 
 <div class="formulario">
-<form action="alterar_senha.php" method="POST">
-<fieldset>
+    <form action="alterar_senha.php" method="POST">
+        <fieldset>
+            <legend>Altere sua senha</legend>
+            <p>Olá, <strong><?php echo htmlspecialchars($_SESSION['usuario']); ?></strong>. Digite sua nova senha abaixo:</p>
 
-<legend>Altere sua senha</legend>
-<p>Olá, <strong><?php echo $_SESSION['usuario']; ?></strong> .Digite sua nova senha abaixo:</p>
+            <label for="nova_senha">Nova Senha:</label>
+            <input type="password" id="nova_senha" name="nova_senha" required>
 
+            <label for="confirmar_senha">Confirmar Nova Senha:</label>
+            <input type="password" id="confirmar_senha" name="confirmar_senha" required>
 
-<label for="nova_senha">Nova Senha:</label>
-<input type="password" id="nova_senha" name="nova_senha" required>
+            <label>
+                <input type="checkbox" onclick="mostrarSenha()"> Mostrar Senha
+            </label>
 
-<label for="confirmar_senha">Confirmar Nova Senha:</label>
-<input type="password" id="confirmar_senha" name="confirmar_senha" required>
-
-<label>
-<input type="checkbox" onclick="mostrarSenha()">Mostrar Senha
-</label>
-
-<div class="botoes">
-<button class="botao_cadastro" type="submit">Salvar Nova Senha</button>
-</div>
-</fieldset>
-</form>
+            <div class="botoes">
+                <button class="botao_cadastro" type="submit">Salvar Nova Senha</button>
+            </div>
+        </fieldset>
+    </form>
 </div>
 
 <script>
@@ -128,11 +122,11 @@ function mostrarSenha(){
     var senha1 = document.getElementById("nova_senha");
     var senha2 = document.getElementById("confirmar_senha");
     var tipo = senha1.type === "password" ? "text" : "password";
-    var tipo2 = senha2.type === "password" ? "text" : "password";
     senha1.type = tipo;
-    senha2.type = tipo2;
+    senha2.type = tipo;
 }
 </script>
+
 <br><br>
 <footer class="l-footer">&copy; 2025 Iris Essence - Beauty Clinic. Todos os direitos reservados.</footer>
 </body>

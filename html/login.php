@@ -5,10 +5,8 @@
     require_once 'conexao.php';
     
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        $email = // Dados enviados via formulário
-        $_POST['email'];
-        $senha = // Dados enviados via formulário
-        $_POST['senha'];
+        $email = $_POST['email'];
+        $senha = $_POST['senha'];
         
         $sql= 'SELECT * FROM usuario WHERE email = :email';
         $stmt = $pdo->prepare($sql);
@@ -30,7 +28,6 @@
             }else{
                 //REDIRECIONA PARA A PÁGINA PRINCIPAL
                 header('Location: principal.php');
-                echo"<script>alert('Teste de entrada');window.location.href='login.php';</script>";
                 exit();
             }
         }else{

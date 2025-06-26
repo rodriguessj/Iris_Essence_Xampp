@@ -248,8 +248,8 @@ Próximo Mês <i class="fa fa-chevron-right"></i>
 </div>
 </div>
 <br>
-
-<button type="button" class="voltar-button" onclick="window.location.href='principal.php'">Voltar</button>
+<br><br>
+            <button type="button" class="voltar-button" onclick="window.location.href='principal.php'">Voltar</button>
 
 <footer class="l-footer">&copy; 2025 Íris Essence - Beauty Clinic. Todos os direitos reservados.</footer>
 

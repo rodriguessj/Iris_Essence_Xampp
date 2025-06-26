@@ -126,6 +126,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['busca_cliente']) && (!
             <label for="busca_cliente">Digite o ID ou Nome do cliente:</label>
             <input type="text" id="busca_cliente" name="busca_cliente" required>
             <button class="botao_cadastro" type="submit">Buscar</button>
+            <br><br>
+            <button type="button" class="voltar-button" onclick="window.location.href='principal.php'">Voltar</button>
         </form>
 <!--FORMULARIO PARA ALTERAR-->
         <?php if ($cliente): ?>

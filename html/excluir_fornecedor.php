@@ -10,23 +10,20 @@
         exit();
     }
     
-    // Inicializa variável para armazenar usuários
+    // Inicializa variável para armazenar fornecedores
     $fornecedores = [];
     
-    // BUSCA EM ORDEM ALFABETICFA
+    // BUSCA EM ORDEM ALFABÉTICA
     $sql = "SELECT * FROM fornecedor ORDER BY nome ASC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $fornecedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Se um ID for passado via GET, exclui o usuário
-    if (isset(// Dados recebidos via URL
-    $_GET['id']) && is_numeric(// Dados recebidos via URL
-    $_GET['id'])) {
-        $id_fornecedor = // Dados recebidos via URL
-        $_GET['id'];
+    // Se um ID for passado via GET, exclui o fornecedor
+    if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+        $id_fornecedor = $_GET['id'];
         
-        //EXCLUI DO BANCO
+        // EXCLUI DO BANCO
         $sql = "DELETE FROM fornecedor WHERE id_fornecedor = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':id', $id_fornecedor, PDO::PARAM_INT);
@@ -44,7 +41,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Íris &ssence - Beauty Clinic</title>
+<title>Íris Essence - Beauty Clinic</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="../css/style.css">
@@ -113,7 +110,8 @@
 <td><?= htmlspecialchars($fornecedor['produto']) ?></td>
 
 <td>
-<a href="excluir_produto.php?id=<?= htmlspecialchars($fornecedor['id_fornecedor']) ?>" onclick="return confirm('Tem certeza que deseja excluir este fornecedor?')">🗑️</a>
+<!-- Alterei o link de exclusão para ficar na mesma página -->
+<a href="?id=<?= htmlspecialchars($fornecedor['id_fornecedor']) ?>" onclick="return confirm('Tem certeza que deseja excluir este fornecedor?')">🗑️</a>
 </td>
 </tr>
 <?php endforeach; ?>

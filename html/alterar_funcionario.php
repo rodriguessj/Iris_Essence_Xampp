@@ -138,6 +138,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['busca_funcionario']) 
             <label for="busca_funcionario">Digite o ID ou Nome do Funcionário:</label>
             <input type="text" id="busca_funcionario" name="busca_funcionario" required>
             <button class="botao_cadastro" type="submit">Buscar</button>
+            <br><br>
+            <button type="button" class="voltar-button" onclick="window.location.href='principal.php'">Voltar</button>
         </form>
 
         <?php if ($funcionario): ?>

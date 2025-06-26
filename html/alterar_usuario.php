@@ -136,6 +136,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['busca_usuario']) && (!
         <input type="text" id="busca_usuario" name="busca_usuario" required>
         <div id="sugestoes"></div>
         <button class="botao_cadastro" type="submit">Buscar</button>
+
+        
     </form>
 
     <?php if ($usuario): ?>

@@ -122,6 +122,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['busca_fornecedor']) &
             <label for="busca_fornecedor">Digite o ID ou Nome do fornecedor:</label>
             <input type="text" id="busca_fornecedor" name="busca_fornecedor" required>
             <button class="botao_cadastro" type="submit">Buscar</button>
+            <br><br>
+            <button type="button" class="voltar-button" onclick="window.location.href='principal.php'">Voltar</button>
         </form>
 
         <?php if ($fornecedor): ?>

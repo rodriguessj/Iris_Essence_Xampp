@@ -16,11 +16,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $senha_pura = $_POST['senha']; // senha em texto puro para a tabela cliente
 
     try {
+        // Buscar dinamicamente o ID do perfil "cliente"
+        $sql_perfil = "SELECT id_perfil FROM perfil WHERE nome_perfil = :nome_perfil LIMIT 1";
+        $stmt_perfil = $pdo->prepare($sql_perfil);
+        $stmt_perfil->execute([':nome_perfil' => 'cliente']);
+        $id_perfil = $stmt_perfil->fetchColumn();
+
+        if (!$id_perfil) {
+            die("Erro: perfil 'cliente' não encontrado.");
+        }
+
         $pdo->beginTransaction();
 
         // Inserir na tabela cliente
-        $sql_cliente = "INSERT INTO cliente (nome, telefone, endereco, email, data_nascimento, genero, senha)
-                        VALUES (:nome, :telefone, :endereco, :email, :data_nascimento, :genero, :senha)";
+        $sql_cliente = "INSERT INTO cliente (nome, telefone, endereco, email, data_nascimento, genero, senha, id_perfil)
+                        VALUES (:nome, :telefone, :endereco, :email, :data_nascimento, :genero, :senha, :id_perfil)";
         $stmt_cliente = $pdo->prepare($sql_cliente);
         $stmt_cliente->execute([
             ':nome' => $nome,
@@ -29,7 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':email' => $email,
             ':data_nascimento' => $data_nascimento,
             ':genero' => $genero,
-            ':senha' => $senha_pura 
+            ':senha' => $senha_pura,
+            ':id_perfil' => $id_perfil
         ]);
 
         // Inserir na tabela usuario
@@ -38,9 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt_usuario = $pdo->prepare($sql_usuario);
         $stmt_usuario->execute([
             ':nome' => $nome,
-            ':senha' => $senha_hash, // senha com hash seguro
+            ':senha' => $senha_hash,
             ':email' => $email,
-            ':id_perfil' => 3 // cliente
+            ':id_perfil' => $id_perfil
         ]);
 
         $pdo->commit();
@@ -51,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-br">

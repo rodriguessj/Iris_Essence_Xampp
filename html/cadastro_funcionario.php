@@ -1,66 +1,60 @@
 <?php
-    // Conexão com o banco de dados
-    // Inicia a sessão do usuário
-    session_start();
-    require_once 'conexao.php';
-    
-    //VERIFICA SE USUARIO TEM PERMISSÃO
-    //supondo que o perfil 1 seja o administrador
-    if (!isset($_SESSION['perfil']) || $_SESSION['perfil'] != 1) {
-        echo "acesso negado!";
+session_start();
+require_once 'conexao.php';
+
+// Verifica se o usuário tem permissão de administrador
+if (!isset($_SESSION['perfil']) || $_SESSION['perfil'] != 1) {
+    echo "<script>alert('Acesso negado!'); window.location.href='principal.php';</script>";
+    exit;
+}
+
+// Inicializa variáveis para preservar valores no formulário em caso de erro
+$nome = $data_nascimento = $telefone = $endereco = $email = $genero = $cargo = $id_perfil = '';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nome = trim($_POST['nome']);
+    $data_nascimento = trim($_POST['data_nascimento']);
+    $telefone = preg_replace('/\D/', '', $_POST['telefone']); // remove máscara
+    $endereco = trim($_POST['endereco']);
+    $email = trim($_POST['email']);
+    $genero = trim($_POST['genero']);
+    $cargo = trim($_POST['cargo']);
+    $id_perfil = trim($_POST['id_perfil']);
+
+    $sql = "INSERT INTO funcionario (nome, data_nascimento, telefone, endereco, email, genero, cargo, id_perfil) 
+            VALUES (:nome, :data_nascimento, :telefone, :endereco, :email, :genero, :cargo, :id_perfil)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':nome', $nome);
+    $stmt->bindParam(':data_nascimento', $data_nascimento);
+    $stmt->bindParam(':telefone', $telefone);
+    $stmt->bindParam(':endereco', $endereco);
+    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':genero', $genero);
+    $stmt->bindParam(':cargo', $cargo);
+    $stmt->bindParam(':id_perfil', $id_perfil, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Funcionário cadastrado com sucesso!'); window.location.href='cadastro_funcionario.php';</script>";
         exit;
+    } else {
+        echo "<script>alert('Erro ao cadastrar funcionário. Tente novamente.');</script>";
     }
-    
-    if ($_SERVER["REQUEST_METHOD"]== "POST"){
-        $nome = trim(// Dados enviados via formulário
-        $_POST['nome']);
-        $data_nascimento = trim(// Dados enviados via formulário
-        $_POST['data_nascimento']);
-        $telefone = trim(// Dados enviados via formulário
-        $_POST['telefone']);
-        $endereco = trim(// Dados enviados via formulário
-        $_POST['endereco']);
-        $email = trim(// Dados enviados via formulário
-        $_POST['email']);
-        $genero = trim(// Dados enviados via formulário
-        $_POST['genero']);
-        $cargo = trim(// Dados enviados via formulário
-        $_POST['cargo']);
-        $id_perfil = trim(// Dados enviados via formulário
-        $_POST['id_perfil']);
-        
-        $sql = "INSERT INTO funcionario(nome, data_nascimento, telefone, endereco, email, genero, cargo, id_perfil) VALUES(:nome, :data_nascimento, :telefone, :endereco, :email, :genero, :cargo, :id_perfil)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':nome', $nome);
-        $stmt->bindParam(':data_nascimento', $data_nascimento);
-        $stmt->bindParam(':telefone', $telefone);
-        $stmt->bindParam(':endereco', $endereco);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':genero', $genero);
-        $stmt->bindParam(':cargo', $cargo);
-        $stmt->bindParam(':id_perfil', $id_perfil, PDO::PARAM_INT);
-        
-        if($stmt->execute()){
-            echo "<script>alert('Funcionário cadastrado com sucesso!');</script>";
-        }else{
-            echo "<script>alert('Erro ao cadastrar funcionário!');</script>";
-        }
-    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Íris &ssence - Beauty Clinic</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="../css/style.css">
-<script src="script.js"></script>
-<link rel="icon" href="../imgs/logo.jpg" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Íris Essence - Cadastrar Funcionário</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="icon" href="../imgs/logo.jpg" type="image/x-icon">
 </head>
 <body class="cadastro-fundo">
+
 <header>
     <nav>
         <ul>
@@ -92,65 +86,87 @@
             <li><a href="../html/produtos.html">PRODUTOS</a></li>|
             <li><a href="../html/login.php">LOGIN</a></li>|
             <li><a href="../html/cadastro.html">CADASTRO</a></li>|
-
             <div class="logout">
-                <form action = "logout.php" method= "POST">
-                <button type="submit">Logout</button>
+                <form action="logout.php" method="POST">
+                    <button type="submit">Logout</button>
+                </form>
             </div>
         </ul>
     </nav>
 </header>
-<br><
-
-<div class="formulario">
-<fieldset>
-<form action="cadastro_funcionario.php" method="POST">
-<legend>Cadastrar funcionário</legend>
-
-<label for="nome">Nome: </label>
-<input type="text" id="nome" name="nome" required>
-
-<label for="data_nascimento">Data de Nascimento: </label>
-<input type="date" id="data_nascimento" name="data_nascimento" required>
-
-<label for="telefone">Telefone: </label>
-<input type="tel" id="telefone" name="telefone" required>
-
-<label for="endereco">Endereço: </label>
-<input type="text" id="endereco" name="endereco" required>
-
-<label for="email">E-mail: </label>
-<input type="email" id="email" name="email" required>
-
-<label for="genero">Genero: </label>
-<input type="text" id="genero" name="genero" required>
-
-<label for="cargo">Cargo: </label>
-<input type="text" id="cargo" name="cargo" required>
-
-<label for="senha">Senha: </label>
-<input type="password" id="senha" name="senha" required>
-
-<label for="id_perfil">Perfil: </label>
-<select id="id_perfil" name="id_perfil">
-<option value="1">Administrador</option>
-<option value="2">Recepcionista</option>
-<option value="3">Esteticista</option>
-</select>
-
-<div class="botoes">
-<button class="botao_cadastro" type="submit">Salvar</button>
-<button class="botao_limpeza" type="reset">Cancelar</button>
-</div>
 
 <br>
-<button type="button" class="voltar-button" onclick="window.location.href='principal.php'">Voltar</button>
-</form>
-</fieldset>
+
+<div class="formulario">
+    <fieldset>
+        <form action="cadastro_funcionario.php" method="POST">
+            <legend>Cadastrar Funcionário</legend>
+
+            <label for="nome">Nome: </label>
+            <input type="text" id="nome" name="nome" value="<?= htmlspecialchars($nome) ?>" required>
+
+            <label for="data_nascimento">Data de Nascimento: </label>
+            <input type="date" id="data_nascimento" name="data_nascimento" value="<?= htmlspecialchars($data_nascimento) ?>" required>
+
+            <label for="telefone">Telefone: </label>
+            <input type="tel" id="telefone" name="telefone" value="<?= htmlspecialchars($telefone) ?>" placeholder="(11) 99999-9999" required>
+
+            <label for="endereco">Endereço: </label>
+            <input type="text" id="endereco" name="endereco" value="<?= htmlspecialchars($endereco) ?>" required>
+
+            <label for="email">E-mail: </label>
+            <input type="email" id="email" name="email" value="<?= htmlspecialchars($email) ?>" required>
+
+            <label for="genero">Gênero: </label>
+            <input type="text" id="genero" name="genero" value="<?= htmlspecialchars($genero) ?>" required>
+
+            <label for="cargo">Cargo: </label>
+            <input type="text" id="cargo" name="cargo" value="<?= htmlspecialchars($cargo) ?>" required>
+
+            <label for="id_perfil">Perfil: </label>
+            <select id="id_perfil" name="id_perfil" required>
+                <option value="1" <?= $id_perfil == "1" ? 'selected' : '' ?>>Administrador</option>
+                <option value="2" <?= $id_perfil == "2" ? 'selected' : '' ?>>Recepcionista</option>
+                <option value="3" <?= $id_perfil == "3" ? 'selected' : '' ?>>Esteticista</option>
+            </select>
+
+            <div class="botoes">
+                <button class="botao_cadastro" type="submit">Salvar</button>
+                <button class="botao_limpeza" type="reset">Cancelar</button>
+            </div>
+
+            <br>
+            <button type="button" class="voltar-button" onclick="window.location.href='principal.php'">Voltar</button>
+        </form>
+    </fieldset>
 </div>
 
-
 <br><br>
-<footer class="l-footer">&copy; 2025 Iris Essence - Beauty Clinic. Todos os direitos reservados.</footer>
+
+<footer class="l-footer">&copy; 2025 Íris Essence - Beauty Clinic. Todos os direitos reservados.</footer>
+
+<script>
+// Máscara para telefone
+document.getElementById('telefone').addEventListener('input', function(e) {
+    let valor = e.target.value.replace(/\D/g, '');
+    if (valor.length > 11) valor = valor.slice(0, 11);
+
+    if (valor.length > 6) {
+        e.target.value = `(${valor.slice(0, 2)}) ${valor.slice(2, 7)}-${valor.slice(7)}`;
+    } else if (valor.length > 2) {
+        e.target.value = `(${valor.slice(0, 2)}) ${valor.slice(2)}`;
+    } else if (valor.length > 0) {
+        e.target.value = `(${valor}`;
+    }
+});
+
+// Bloqueia números nos campos de texto
+['nome', 'genero', 'cargo'].forEach(id => {
+    document.getElementById(id).addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
+    });
+});
+</script>
+
 </body>
 </html>

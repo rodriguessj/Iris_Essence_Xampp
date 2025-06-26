@@ -4,7 +4,7 @@ require_once 'conexao.php';
 
 $mensagem = "";
 
-
+// Verifica se a requisição é POST (formulário enviado)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = $_POST['nome'];
     $telefone = $_POST['telefone'];
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Íris &ssence - Beauty Clinic</title>
+  <title>Íris Essence - Beauty Clinic</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../css/style.css">
@@ -95,8 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <li><a href="../html/produtos.php">PRODUTOS</a></li>|
             <li><a href="../html/login.php">LOGIN</a></li>|
             <li><a href="../html/cadastro_cliente.php">CADASTRO</a></li>|
-                </form>
-            
         </ul>
     </nav>
 </header>
@@ -154,6 +152,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <?php endif; ?>
 </script>
 <?php endif; ?>
+
+<script>
+    // Função para bloquear caracteres inválidos no nome (somente letras e espaços)
+    document.getElementById('nome').addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, ''); // Bloqueia números e caracteres especiais
+    });
+
+    // Máscara para o campo de telefone
+    document.getElementById('telefone').addEventListener('input', function(e) {
+        let telefone = e.target.value;
+        telefone = telefone.replace(/\D/g, ''); // Remove tudo que não é número
+
+        // Aplica a máscara no formato (XX) XXXXX-XXXX
+        if (telefone.length <= 2) {
+            e.target.value = '(' + telefone;
+        } else if (telefone.length <= 6) {
+            e.target.value = '(' + telefone.substring(0, 2) + ') ' + telefone.substring(2);
+        } else {
+            e.target.value = '(' + telefone.substring(0, 2) + ') ' + telefone.substring(2, 7) + '-' + telefone.substring(7, 11);
+        }
+    });
+
+    // Verifica a senha no momento de digitação
+    document.getElementById('senha').addEventListener('input', function(e) {
+        let senha = e.target.value;
+        if (senha.length < 6) {
+            // Se a senha for menor que 6 caracteres, impede a digitação de mais caracteres
+            e.target.setCustomValidity("A senha deve ter pelo menos 6 caracteres!");
+        } else {
+            e.target.setCustomValidity(""); // Limpa a validação personalizada
+        }
+    });
+</script>
 
 </body>
 </html>

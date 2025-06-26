@@ -30,7 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
 
     if ($nome === '' || $procedimento === '' || !$data || !$hora) {
         $_SESSION['msg'] = "❌ Preencha todos os campos corretamente.";
-        header("Location: agenda_completa.php");
+        // Redireciona para a própria página sem login
+        header("Location: agenda_completa.php"); 
         exit;
     }
 
@@ -45,7 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
                 ? "✅ Agendamento cadastrado com sucesso!"
                 : "❌ Erro ao cadastrar.";
         }
-        header("Location: agenda_completa.php");
+        // Ao invés de redirecionar para login, volta à mesma página de agendamentos
+        header("Location: agenda_completa.php"); 
         exit;
     }
 
@@ -61,7 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
                 ? "✅ Agendamento atualizado com sucesso!"
                 : "❌ Erro ao atualizar.";
         }
-        header("Location: agenda_completa.php");
+        // Redireciona de volta para a página de agendamentos após atualização
+        header("Location: agenda_completa.php"); 
         exit;
     }
 }
@@ -72,6 +75,7 @@ if (isset($_GET['excluir'])) {
     $_SESSION['msg'] = $del->execute([$idDel])
         ? "✅ Agendamento excluído!"
         : "❌ Erro ao excluir.";
+    // Redireciona de volta para a página de agendamentos após exclusão
     header("Location: agenda_completa.php");
     exit;
 }
@@ -97,11 +101,12 @@ foreach ($agendamentos as $a) {
     $agenda[$a['data']][] = $a;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8" />
-    <title>Íris &ssence - Agenda Completa</title>
+    <title>Íris Essence - Agenda Completa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../css/style.css" />
@@ -118,7 +123,7 @@ foreach ($agendamentos as $a) {
                 <a href="#">PROCEDIMENTOS FACIAIS</a>
                 <div class="submenu">
                     <a href="../html/limpezapele.html">Limpeza de Pele</a>
-                    <a href="../html/labial.html">Preenchimento labial</a>
+                    <a href="../html/labial.html">Preenchimento Labial</a>
                     <a href="../html/microagulhamento.html">Microagulhamento</a>
                     <a href="../html/botoxfacial.html">Botox</a>
                     <a href="../html/acne.html">Tratamento para Acne</a>
@@ -131,17 +136,17 @@ foreach ($agendamentos as $a) {
                     <a href="../html/massagemmodeladora.html">Massagem Modeladora</a>
                     <a href="../html/drenagemlinfatica.html">Drenagem Linfática</a>
                     <a href="../html/depilacaolaser.html">Depilação a Laser</a>
-                    <a href="../html/depilacaocera.html">Depilação de cera</a>
+                    <a href="../html/depilacaocera.html">Depilação de Cera</a>
                     <a href="../html/massagemrelaxante.html">Massagem Relaxante</a>
                 </div>
             </li>
             <li><a href="../html/produtos.html">PRODUTOS</a></li>|
             <li><a href="../html/login.php">LOGIN</a></li>|
             <li><a href="../html/cadastro.html">CADASTRO</a></li>|
-
             <div class="logout">
-                <form action = "logout.php" method= "POST">
-                <button type="submit">Logout</button>
+                <form action="logout.php" method="POST">
+                    <button type="submit">Logout</button>
+                </form>
             </div>
         </ul>
     </nav>
@@ -149,7 +154,6 @@ foreach ($agendamentos as $a) {
 <br><br>
 
 <div class="formulario">
-
     <?php if ($msg): ?>
         <script>
             alert("<?= addslashes($msg) ?>");
@@ -172,35 +176,34 @@ foreach ($agendamentos as $a) {
             </div>
 
             <div class="mb-3">
-    <label for="procedimento" class="form-label">Procedimento:</label>
-    <select id="procedimento" name="procedimento" class="form-select" required>
-        <?php
-        $procSelecionado = $edita_agendamento ? $edita_agendamento['procedimento'] : '';
-        ?>
-        <optgroup label="Procedimentos Faciais">
-            <option value="limpeza de pele" <?= $procSelecionado === 'limpeza de pele' ? 'selected' : '' ?>>Limpeza de Pele</option>
-            <option value="preenchimento labial" <?= $procSelecionado === 'preenchimento labial' ? 'selected' : '' ?>>Preenchimento Labial</option>
-            <option value="microagulhamento" <?= $procSelecionado === 'microagulhamento' ? 'selected' : '' ?>>Microagulhamento</option>
-            <option value="botox" <?= $procSelecionado === 'botox' ? 'selected' : '' ?>>Botox</option>
-            <option value="tratamento para acne" <?= $procSelecionado === 'tratamento para acne' ? 'selected' : '' ?>>Tratamento para Acne</option>
-            <option value="rinomodelação" <?= $procSelecionado === 'rinomodelação' ? 'selected' : '' ?>>Rinomodelação</option>
-        </optgroup>
-        <optgroup label="Procedimentos Corporais">
-            <option value="massagem modeladora" <?= $procSelecionado === 'massagem modeladora' ? 'selected' : '' ?>>Massagem Modeladora</option>
-            <option value="drenagem linfatica" <?= $procSelecionado === 'drenagem linfatica' ? 'selected' : '' ?>>Drenagem Linfática</option>
-            <option value="depilação a laser" <?= $procSelecionado === 'depilação a laser' ? 'selected' : '' ?>>Depilação a Laser</option>
-            <option value="depilação a cera" <?= $procSelecionado === 'depilação a cera' ? 'selected' : '' ?>>Depilação a Cera</option>
-            <option value="massagem relaxante" <?= $procSelecionado === 'massagem relaxante' ? 'selected' : '' ?>>Massagem Relaxante</option>
-        </optgroup>
-    </select>
-</div>
-
+                <label for="procedimento" class="form-label">Procedimento:</label>
+                <select id="procedimento" name="procedimento" class="form-select" required>
+                    <?php
+                    $procSelecionado = $edita_agendamento ? $edita_agendamento['procedimento'] : '';
+                    ?>
+                    <optgroup label="Procedimentos Faciais">
+                        <option value="limpeza de pele" <?= $procSelecionado === 'limpeza de pele' ? 'selected' : '' ?>>Limpeza de Pele</option>
+                        <option value="preenchimento labial" <?= $procSelecionado === 'preenchimento labial' ? 'selected' : '' ?>>Preenchimento Labial</option>
+                        <option value="microagulhamento" <?= $procSelecionado === 'microagulhamento' ? 'selected' : '' ?>>Microagulhamento</option>
+                        <option value="botox" <?= $procSelecionado === 'botox' ? 'selected' : '' ?>>Botox</option>
+                        <option value="tratamento para acne" <?= $procSelecionado === 'tratamento para acne' ? 'selected' : '' ?>>Tratamento para Acne</option>
+                        <option value="rinomodelação" <?= $procSelecionado === 'rinomodelação' ? 'selected' : '' ?>>Rinomodelação</option>
+                    </optgroup>
+                    <optgroup label="Procedimentos Corporais">
+                        <option value="massagem modeladora" <?= $procSelecionado === 'massagem modeladora' ? 'selected' : '' ?>>Massagem Modeladora</option>
+                        <option value="drenagem linfatica" <?= $procSelecionado === 'drenagem linfatica' ? 'selected' : '' ?>>Drenagem Linfática</option>
+                        <option value="depilação a laser" <?= $procSelecionado === 'depilação a laser' ? 'selected' : '' ?>>Depilação a Laser</option>
+                        <option value="depilação a cera" <?= $procSelecionado === 'depilação a cera' ? 'selected' : '' ?>>Depilação a Cera</option>
+                        <option value="massagem relaxante" <?= $procSelecionado === 'massagem relaxante' ? 'selected' : '' ?>>Massagem Relaxante</option>
+                    </optgroup>
+                </select>
+            </div>
 
             <div class="mb-3">
                 <label for="data" class="form-label">Data:</label>
                 <input type="date" id="data" name="data" class="form-control" required
-                    min="<?= date('Y-m-d') ?>"
-                    value="<?= $edita_agendamento ? htmlspecialchars($edita_agendamento['data']) : '' ?>" />
+                       min="<?= date('Y-m-d') ?>"
+                       value="<?= $edita_agendamento ? htmlspecialchars($edita_agendamento['data']) : '' ?>" />
             </div>
 
             <div class="mb-3">
@@ -286,7 +289,7 @@ foreach ($agendamentos as $a) {
             <?php endforeach; ?>
         <?php endif; ?>
          <br>
-<button type="button" class="voltar-button" onclick="window.location.href='principal.php'">Voltar</button>
+        <button type="button" class="voltar-button" onclick="window.location.href='principal.php'">Voltar</button>
     </fieldset>
 <br><br>
 </div>
@@ -315,6 +318,5 @@ foreach ($agendamentos as $a) {
     });
 </script>
 <footer class="l-footer">&copy; 2025 Íris Essence - Beauty Clinic. Todos os direitos reservados.</footer>
-
 </body>
 </html>

@@ -19,7 +19,7 @@
     // $pass: Define a senha para o usuário do banco de dados.
     // '' (uma string vazia) significa que não há senha configurada para o usuário 'root'.
     // Isso é comum em configurações locais de desenvolvimento, mas **altamente inseguro** para servidores de produção.
-    $pass = '';
+    $pass = 'root';
     
     // O bloco try...catch é usado para tratamento de erros.
     // Se algo der errado ao tentar conectar ao banco de dados (dentro do 'try'),

@@ -2,25 +2,25 @@
 session_start();
 require 'conexao.php';
 
-
+// Verifica se o usuário tem permissão de ADM ou Gerente
+if (!isset($_SESSION['perfil']) || ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2)) {
+    echo "<script>alert('Acesso negado!'); window.location.href='principal.php';</script>";
+    exit();
+}
 
 $cliente = null;
 
-// Processa alteração de dados se o formulário for enviado
+// Processa alteração de dados
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_cliente']) && isset($_POST['acao']) && $_POST['acao'] === 'alterar') {
     $id_cliente = $_POST['id_cliente'];
     $nome = trim($_POST['nome']);
-    $telefone = trim($_POST['telefone']);
+    $telefone = preg_replace('/\D/', '', $_POST['telefone']); // remove máscara
     $endereco = trim($_POST['endereco']);
     $email = trim($_POST['email']);
     $data_nascimento = trim($_POST['data_nascimento']);
     $genero = trim($_POST['genero']);
-    
 
-    $sql = "UPDATE cliente SET nome = :nome, telefone = :telefone, endereco = :endereco, email = :email, data_nascimento = :data_nascimento,
-    genero = :genero";
-
-    $sql .= " WHERE id_cliente = :id_cliente";
+    $sql = "UPDATE cliente SET nome = :nome, telefone = :telefone, endereco = :endereco, email = :email, data_nascimento = :data_nascimento, genero = :genero WHERE id_cliente = :id_cliente";
 
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':nome', $nome);
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_cliente']) && isse
     }
 }
 
-// Processa busca de usuário
+// Busca cliente
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['busca_cliente']) && (!isset($_POST['acao']) || $_POST['acao'] !== 'alterar')) {
     $busca = trim($_POST['busca_cliente']);
 
@@ -107,10 +107,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['busca_cliente']) && (!
             <li><a href="../html/produtos.html">PRODUTOS</a></li>|
             <li><a href="../html/login.php">LOGIN</a></li>|
             <li><a href="../html/cadastro.html">CADASTRO</a></li>|
-
             <div class="logout">
-                <form action = "logout.php" method= "POST">
-                <button type="submit">Logout</button>
+                <form action="logout.php" method="POST">
+                    <button type="submit">Logout</button>
+                </form>
             </div>
         </ul>
     </nav>
@@ -120,47 +120,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['busca_cliente']) && (!
 
 <div class="formulario">
     <fieldset>
-        <!-- Formulário para buscar usuário pelo ID ou Nome -->
         <form action="alterar_cliente.php" method="POST">
             <legend>Alterar Cliente</legend>
             <label for="busca_cliente">Digite o ID ou Nome do cliente:</label>
             <input type="text" id="busca_cliente" name="busca_cliente" required>
-            <div id="sugestoes"></div>
             <button class="botao_cadastro" type="submit">Buscar</button>
         </form>
 
         <?php if ($cliente): ?>
-            <!-- Formulário para alterar usuário -->
-            <form action="alterar_cliente.php" method="POST">
-                <input type="hidden" name="id_cliente" value="<?= htmlspecialchars($cliente['id_cliente']) ?>">
-                <input type="hidden" name="acao" value="alterar">
+        <form action="alterar_cliente.php" method="POST">
+            <input type="hidden" name="id_cliente" value="<?= htmlspecialchars($cliente['id_cliente']) ?>">
+            <input type="hidden" name="acao" value="alterar">
 
-                <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome" value="<?= htmlspecialchars($cliente['nome']) ?>" required>
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" value="<?= htmlspecialchars($cliente['nome']) ?>" required>
 
-                <label for="telefone">Telefone:</label>
-                <input type="text" id="telefone" name="telefone" value="<?= htmlspecialchars($cliente['telefone']) ?>" required>
+            <label for="telefone">Telefone:</label>
+            <input type="tel" id="telefone" name="telefone" value="<?= htmlspecialchars($cliente['telefone']) ?>" placeholder="(11) 90000-0000" required>
 
-                <label for="endereco">Endereço:</label>
-                <input type="text" id="endereco" name="endereco" value="<?= htmlspecialchars($cliente['endereco']) ?>" required>
+            <label for="endereco">Endereço:</label>
+            <input type="text" id="endereco" name="endereco" value="<?= htmlspecialchars($cliente['endereco']) ?>" required>
 
-                <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" value="<?= htmlspecialchars($cliente['email']) ?>" required>
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" value="<?= htmlspecialchars($cliente['email']) ?>" required>
 
-                <label for="data_nascimento">Data de Nascimento:</label>
-                <input type="date" id="data_nascimento" name="data_nascimento" value="<?= htmlspecialchars($cliente['data_nascimento']) ?>" required>
+            <label for="data_nascimento">Data de Nascimento:</label>
+            <input type="date" id="data_nascimento" name="data_nascimento" value="<?= htmlspecialchars($cliente['data_nascimento']) ?>" required>
 
-                <label for="genero">Gênero:</label>
-                <input type="text" id="genero" name="genero" value="<?= htmlspecialchars($cliente['genero']) ?>" required>
+            <label for="genero">Gênero:</label>
+            <input type="text" id="genero" name="genero" value="<?= htmlspecialchars($cliente['genero']) ?>" required>
 
-
-                <div class="botoes">
-                    <button class="botao_cadastro" type="submit">Alterar</button>
-                    <button class="botao_limpeza" type="reset">Cancelar</button>
-                </div>
+            <div class="botoes">
+                <button class="botao_cadastro" type="submit">Alterar</button>
+                <button class="botao_limpeza" type="reset">Cancelar</button>
+            </div>
 
             <button type="button" class="voltar-button" onclick="window.location.href='principal.php'">Voltar</button>
-            </form>
+        </form>
         <?php endif; ?>
     </fieldset>
 </div>
@@ -168,6 +164,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['busca_cliente']) && (!
 <br><br>
 
 <footer class="l-footer">&copy; 2025 Íris Essence - Beauty Clinic. Todos os direitos reservados.</footer>
+
+<script>
+// Máscara telefone
+document.addEventListener('DOMContentLoaded', () => {
+    const tel = document.getElementById('telefone');
+    if (tel) {
+        tel.addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 6) {
+                e.target.value = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+            } else if (v.length > 2) {
+                e.target.value = `(${v.slice(0,2)}) ${v.slice(2)}`;
+            } else if (v.length > 0) {
+                e.target.value = `(${v}`;
+            }
+        });
+    }
+
+    // Bloqueia números em nome e gênero
+    ['nome', 'genero'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
+            });
+        }
+    });
+});
+</script>
 
 </body>
 </html>

@@ -277,7 +277,7 @@ foreach ($agendamentos as $a) {
                                         <a href="?editar=<?= $ag['id_agendamento'] ?>" class="btn btn-sm btn-warning" title="Editar">
                                             <i class="fa fa-pencil"></i>
                                         </a>
-                                        <a href="?excluir=<?= $ag['id_agendamento'] ?>" class="btn btn-sm btn-danger" title="Excluir" onclick="return confirm('Confirma exclusão?')">
+                                        <a href="?excluir=<?= $ag['id_agendamento'] ?>" class="btn btn-sm btn-danger" title="Excluir" onclick="return confirm('Confirmar exclusão?')">
                                             <i class="fa fa-trash"></i>
                                         </a>
                                     </td>

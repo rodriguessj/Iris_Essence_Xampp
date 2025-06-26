@@ -4,12 +4,13 @@ require_once 'conexao.php';
 
 $mensagem = "";
 
-// Verifica se o usuário tem permissão de administrador
-if (!isset($_SESSION['perfil']) || $_SESSION['perfil'] != 1) {
-    echo "<script>alert('Acesso negado!'); window.location.href='login.php';</script>";
-    exit;
-}
+    //VERIFICA SE USUARIO TEM PERMISSÃO DE ADM 
+    if($_SESSION['perfil'] !=1){
+        echo "<script>alert('Acesso negado!');wiondow.location.href='principal.php';</script>";
+        exit();
+    }
 
+//INSERE NA TABELA
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome = $_POST['nome'];
     $email = $_POST['email'];

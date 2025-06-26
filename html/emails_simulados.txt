@@ -62,3 +62,7 @@ Para: julia@julia
 Olá! Sua nova senha temporária é: MWQO1YAh
 
 ----------------------
+Para: julia@julia
+Olá! Sua nova senha temporária é: HCyQOfJt
+
+----------------------

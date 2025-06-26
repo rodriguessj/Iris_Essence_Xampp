@@ -2,15 +2,15 @@
 session_start();
 require 'conexao.php';
 
-// Verifica se o usuário tem permissão de ADM ou Gerente
-if (!isset($_SESSION['perfil']) || ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2)) {
-    echo "<script>alert('Acesso negado!'); window.location.href='principal.php';</script>";
-    exit();
-}
+    //VERIFICA SE USUARIO TEM PERMISSÃO DE ADM 
+    if($_SESSION['perfil'] !=1){
+        echo "<script>alert('Acesso negado!');wiondow.location.href='principal.php';</script>";
+        exit();
+    }
 
 $funcionario = null;
 
-// Processa alteração de dados
+// PROCESSA ALTERAÇÃO
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_funcionario'], $_POST['acao']) && $_POST['acao'] === 'alterar') {
     $id_funcionario = $_POST['id_funcionario'];
     $nome = trim($_POST['nome']);
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_funcionario'], $_P
     }
 }
 
-// Busca funcionário
+// BUSCA
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['busca_funcionario']) && (!isset($_POST['acao']) || $_POST['acao'] !== 'alterar')) {
     $busca = trim($_POST['busca_funcionario']);
 

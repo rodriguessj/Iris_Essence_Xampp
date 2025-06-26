@@ -2,11 +2,11 @@
 session_start();
 require_once 'conexao.php';
 
-// Verifica se o usuário tem permissão de administrador
-if (!isset($_SESSION['perfil']) || $_SESSION['perfil'] != 1) {
-    echo "<script>alert('Acesso negado!'); window.location.href='principal.php';</script>";
-    exit;
-}
+    //VERIFICA SE USUARIO TEM PERMISSÃO DE ADM OU SECRETARIA
+    if($_SESSION['perfil'] !=1){
+        echo "<script>alert('Acesso negado!');wiondow.location.href='principal.php';</script>";
+        exit();
+    }
 
 // Inicializa variáveis para preservar valores no formulário em caso de erro
 $nome = $data_nascimento = $telefone = $endereco = $email = $genero = $cargo = $id_perfil = '';

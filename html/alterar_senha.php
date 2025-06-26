@@ -9,6 +9,7 @@ if (!isset($_SESSION['id_usuario'])) {
     exit();
 }
 
+//PROCESSA ALTERAÇÃO
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_usuario = $_SESSION['id_usuario'];
     $nova_senha = $_POST['nova_senha']; // Dados enviados via formulário

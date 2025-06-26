@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $senha_pura = $_POST['senha']; // senha em texto puro para a tabela cliente
 
     try {
-        // Buscar dinamicamente o ID do perfil "cliente"
+        // BUSCA
         $sql_perfil = "SELECT id_perfil FROM perfil WHERE nome_perfil = :nome_perfil LIMIT 1";
         $stmt_perfil = $pdo->prepare($sql_perfil);
         $stmt_perfil->execute([':nome_perfil' => 'cliente']);
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $pdo->beginTransaction();
 
-        // Inserir na tabela cliente
+        // INSERE NA TABELA CLIENTE
         $sql_cliente = "INSERT INTO cliente (nome, telefone, endereco, email, data_nascimento, genero, senha, id_perfil)
                         VALUES (:nome, :telefone, :endereco, :email, :data_nascimento, :genero, :senha, :id_perfil)";
         $stmt_cliente = $pdo->prepare($sql_cliente);
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':id_perfil' => $id_perfil
         ]);
 
-        // Inserir na tabela usuario
+        // INSERE NA TABELA USUARIO
         $sql_usuario = "INSERT INTO usuario (nome, senha, email, id_perfil)
                         VALUES (:nome, :senha, :email, :id_perfil)";
         $stmt_usuario = $pdo->prepare($sql_usuario);

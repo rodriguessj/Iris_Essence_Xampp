@@ -94,7 +94,7 @@
 <div class="formulario">
 <fieldset>
 
-<!-- FORMULARIO PARA BUSCAR USUARIOS -->
+<!-- FORMULARIO PARA BUSCAR -->
 <form action="buscar_fornecedor.php" method="POST">
 <legend>Listar fornecedor</legend>
 <label for="busca">Digite o ID ou NOME(opcional):</label>

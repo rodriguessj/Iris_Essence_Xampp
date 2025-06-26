@@ -13,7 +13,7 @@
     // Inicializa variável para armazenar usuários
     $fornecedores = [];
     
-    // Busca todos os usuários cadastrados em ordem alfabética
+    // BUSCA EM ORDEM ALFABETICFA
     $sql = "SELECT * FROM fornecedor ORDER BY nome ASC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
@@ -26,7 +26,7 @@
         $id_fornecedor = // Dados recebidos via URL
         $_GET['id'];
         
-        // Exclui o usuário do banco de dados
+        //EXCLUI DO BANCO
         $sql = "DELETE FROM fornecedor WHERE id_fornecedor = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':id', $id_fornecedor, PDO::PARAM_INT);

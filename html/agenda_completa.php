@@ -2,12 +2,20 @@
 session_start();
 require_once 'conexao.php';
 
+    //VERIFICA SE USUARIO TEM PERMISSÃO DE ADM 
+    if($_SESSION['perfil'] !=1){
+        echo "<script>alert('Acesso negado!');wiondow.location.href='principal.php';</script>";
+        exit();
+    }
+
 $msg = $_SESSION['msg'] ?? '';
 unset($_SESSION['msg']);
 
 $edita_id = null;
 $edita_agendamento = null;
 
+
+//BUSCA HORARIOS DISPONIVEIS
 function fetchHorariosDisponiveis($pdo, $data, $ignorarHora = null) {
     $grade = ["08:00","09:00","10:00","11:00","13:00","14:00","15:00","16:00","17:00"];
     $sql = "SELECT hora FROM agendamentos WHERE data = ?";
@@ -21,6 +29,7 @@ function fetchHorariosDisponiveis($pdo, $data, $ignorarHora = null) {
     return array_values(array_diff($grade, $ocupados));
 }
 
+//PROCESSA FORMULARIO
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
     $acao = $_POST['acao'];
     $nome = trim($_POST['nome'] ?? '');
@@ -35,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
         exit;
     }
 
+//CADASTRAR
     if ($acao === 'cadastrar') {
         $verifica = $pdo->prepare("SELECT COUNT(*) FROM agendamentos WHERE data = ? AND hora = ?");
         $verifica->execute([$data, $hora]);
@@ -46,11 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
                 ? "✅ Agendamento cadastrado com sucesso!"
                 : "❌ Erro ao cadastrar.";
         }
-        // Ao invés de redirecionar para login, volta à mesma página de agendamentos
+
         header("Location: agenda_completa.php"); 
         exit;
     }
 
+//ALTERAR
     if ($acao === 'alterar' && isset($_POST['id_agendamento'])) {
         $id = (int)$_POST['id_agendamento'];
         $verifica = $pdo->prepare("SELECT COUNT(*) FROM agendamentos WHERE data = ? AND hora = ? AND id_agendamento != ?");
@@ -63,12 +74,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
                 ? "✅ Agendamento atualizado com sucesso!"
                 : "❌ Erro ao atualizar.";
         }
-        // Redireciona de volta para a página de agendamentos após atualização
         header("Location: agenda_completa.php"); 
         exit;
     }
 }
 
+//EXCLUIR
 if (isset($_GET['excluir'])) {
     $idDel = (int)$_GET['excluir'];
     $del = $pdo->prepare("DELETE FROM agendamentos WHERE id_agendamento=?");
@@ -80,6 +91,7 @@ if (isset($_GET['excluir'])) {
     exit;
 }
 
+//CARREGA DADOS PARA EDITAR
 if (isset($_GET['editar'])) {
     $edita_id = (int)$_GET['editar'];
     $stmt = $pdo->prepare("SELECT * FROM agendamentos WHERE id_agendamento=?");
@@ -87,6 +99,7 @@ if (isset($_GET['editar'])) {
     $edita_agendamento = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
+//BUSCAR E ORDENAR PROCEDIMENTOS POR DATA
 $busca = $_GET['busca'] ?? '';
 $filtro = $busca ? " WHERE nome LIKE ? OR procedimento LIKE ? OR data LIKE ?" : '';
 $params = $busca ? ["%$busca%", "%$busca%", "%$busca%"] : [];
@@ -96,6 +109,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $agendamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+//AGRUPA AGENDAMENTOS POR DATA
 $agenda = [];
 foreach ($agendamentos as $a) {
     $agenda[$a['data']][] = $a;
@@ -153,6 +167,7 @@ foreach ($agendamentos as $a) {
 </header>
 <br><br>
 
+<!--CARREGA MENSAGEM DE ALERT-->
 <div class="formulario">
     <?php if ($msg): ?>
         <script>
@@ -160,6 +175,7 @@ foreach ($agendamentos as $a) {
         </script>
     <?php endif; ?>
 
+<!--CADASTRO OU EDIÇÃO DE AGENDAMENTO-->
     <fieldset>
         <legend><?= $edita_agendamento ? "Editar Agendamento #{$edita_agendamento['id_agendamento']}" : "Cadastrar Novo Agendamento" ?></legend>
 
@@ -206,6 +222,7 @@ foreach ($agendamentos as $a) {
                        value="<?= $edita_agendamento ? htmlspecialchars($edita_agendamento['data']) : '' ?>" />
             </div>
 
+<!--RETORNA APENAS HORARIOS DISPONIVEIS-->
             <div class="mb-3">
                 <label for="hora" class="form-label">Hora:</label>
                 <select id="hora" name="hora" class="form-select" required>
@@ -239,6 +256,7 @@ foreach ($agendamentos as $a) {
 
     <hr>
 
+<!--BUSCA OS AGENDAMENTOS-->
     <fieldset>
         <legend>Buscar Agendamentos</legend>
         <form method="GET" action="agenda_completa.php" class="mb-3 d-flex gap-2">
@@ -250,6 +268,7 @@ foreach ($agendamentos as $a) {
         </form>
     </fieldset>
 
+<!--EXIBE OS AGENDAMENTOS POR DATA-->
     <fieldset>
         <legend>Agenda</legend>
         <?php if (empty($agenda)): ?>

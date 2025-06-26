@@ -79,7 +79,7 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <div class="formulario">
 <fieldset>
 
-<!-- FORMULARIO PARA BUSCAR USUARIOS -->
+<!-- FORMULARIO PARA BUSCAR -->
 <form action="buscar_cliente.php" method="POST">
     <legend>Listar clientes</legend>
     <label for="busca">Digite o ID ou NOME(opcional):</label>

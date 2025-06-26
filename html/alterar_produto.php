@@ -11,7 +11,8 @@
     }
     
     $produto = null;
-    
+ 
+//PROCESSA ALTERAÇÃO
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset(// Dados enviados via formulário
     $_POST['id']) && isset(// Dados enviados via formulário
     $_POST['acao']) && // Dados enviados via formulário

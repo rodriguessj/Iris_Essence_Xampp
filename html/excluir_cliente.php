@@ -4,11 +4,16 @@
     session_start();
     require 'conexao.php';
     
+        //VERIFICA SE USUARIO TEM PERMISSÃO DE ADM
+    if($_SESSION['perfil'] !=1){
+        echo "<script>alert('Acesso negado!');wiondow.location.href='principal.php';</script>";
+        exit();
+    }
     
     // Inicializa variável para armazenar clientes
     $clientes = [];
     
-    // Busca todos os clientes cadastrados em ordem alfabética
+    // BUSCA EM ORDEM ALFABETICA
     $sql = "SELECT * FROM cliente ORDER BY nome ASC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
@@ -21,7 +26,7 @@
         $id_cliente = // Dados recebidos via URL
         $_GET['id'];
         
-        // Exclui o cliente do banco de dados
+        // EXCLUI DO BANCO
         $sql = "DELETE FROM cliente WHERE id_cliente = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':id', $id_cliente, PDO::PARAM_INT);

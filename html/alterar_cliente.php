@@ -2,15 +2,15 @@
 session_start();
 require 'conexao.php';
 
-// Verifica se o usuário tem permissão de ADM ou Gerente
-if (!isset($_SESSION['perfil']) || ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2)) {
-    echo "<script>alert('Acesso negado!'); window.location.href='principal.php';</script>";
-    exit();
-}
+    //VERIFICA SE USUARIO TEM PERMISSÃO DE ADM OU SECRETARIA
+    if($_SESSION['perfil'] !=1 && $_SESSION['perfil'] !=2){
+        echo "<script>alert('Acesso negado!');wiondow.location.href='principal.php';</script>";
+        exit();
+    }
 
 $cliente = null;
 
-// Processa alteração de dados
+// PROCESSA ALTERAÇÃO DE DADOS
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_cliente']) && isset($_POST['acao']) && $_POST['acao'] === 'alterar') {
     $id_cliente = $_POST['id_cliente'];
     $nome = trim($_POST['nome']);
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_cliente']) && isse
     }
 }
 
-// Busca cliente
+//BUSCA
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['busca_cliente']) && (!isset($_POST['acao']) || $_POST['acao'] !== 'alterar')) {
     $busca = trim($_POST['busca_cliente']);
 
@@ -121,12 +121,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['busca_cliente']) && (!
 <div class="formulario">
     <fieldset>
         <form action="alterar_cliente.php" method="POST">
+            <!--BUSCA-->
             <legend>Alterar Cliente</legend>
             <label for="busca_cliente">Digite o ID ou Nome do cliente:</label>
             <input type="text" id="busca_cliente" name="busca_cliente" required>
             <button class="botao_cadastro" type="submit">Buscar</button>
         </form>
-
+<!--FORMULARIO PARA ALTERAR-->
         <?php if ($cliente): ?>
         <form action="alterar_cliente.php" method="POST">
             <input type="hidden" name="id_cliente" value="<?= htmlspecialchars($cliente['id_cliente']) ?>">

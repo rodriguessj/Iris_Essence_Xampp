@@ -94,7 +94,7 @@
 <div class="formulario">
 <fieldset>
 
-<!-- FORMULARIO PARA BUSCAR USUARIOS -->
+<!-- FORMULARIO PARA BUSCAR -->
 <form action="buscar_funcionario.php" method="POST">
 <legend>Listar funcionários</legend>
 <label for="busca">Digite o ID ou NOME(opcional):</label>

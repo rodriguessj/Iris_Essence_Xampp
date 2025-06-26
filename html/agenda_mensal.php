@@ -2,7 +2,13 @@
     // Inicia a sessão do usuário
     session_start();
     require_once 'conexao.php';
-    
+  
+    //VERIFICA SE USUARIO TEM PERMISSÃO DE ADM OU SECRETARIA
+    if($_SESSION['perfil'] !=1 && $_SESSION['perfil'] !=2){
+        echo "<script>alert('Acesso negado!');wiondow.location.href='principal.php';</script>";
+        exit();
+    }
+
     date_default_timezone_set('America/Sao_Paulo');
     
     $hoje = date('Y-m-d');
@@ -22,11 +28,11 @@
     
     // Gera array dos dias do mês
     $diasNoMes = cal_days_in_month(CAL_GREGORIAN, $mes, $ano);
-    $primeiroDiaSemana = date('w', strtotime("$ano-$mes-01")); // 0=domingo ... 6=sábado
+    $primeiroDiaSemana = date('w', strtotime("$ano-$mes-01")); 
     
     // Ajuste para calendário que inicia na segunda-feira
     // Se quiser domingo como primeiro dia, mude aqui para usar 0 como domingo.
-    $primeiroDiaSemana = $primeiroDiaSemana == 0 ? 7 : $primeiroDiaSemana; // domingo=7
+    $primeiroDiaSemana = $primeiroDiaSemana == 0 ? 7 : $primeiroDiaSemana; 
     
 ?>
 <!DOCTYPE html>
@@ -41,7 +47,7 @@
 <link rel="stylesheet" href="../css/style.css" />
 <style>
 .calendario {
-    max-width: 1100px; /* Aumentado de 900 para 1050 */
+    max-width: 1100px; 
     margin: auto;
     background: white;
     padding: 20px;
@@ -151,6 +157,8 @@ table.calendar td.dia.disabled {
     </nav>
 </header>
 <br>
+
+<!--NAVEGA ENTRE OS MESES-->
 <div class="calendario">
 <div class="nav-mes">
 <a href="?ano=<?= $mes == 1 ? $ano-1 : $ano ?>&mes=<?= $mes == 1 ? 12 : $mes-1 ?>" class="btn btn-outline-primary">
@@ -166,6 +174,7 @@ Próximo Mês <i class="fa fa-chevron-right"></i>
 </a>
 </div>
 
+<!--CRIA TABELAS DO CALENDARIO-->
 <table class="calendar table table-bordered">
 <thead>
 <tr>
@@ -204,6 +213,8 @@ Próximo Mês <i class="fa fa-chevron-right"></i>
                 $diaNumero = "";
             }
         ?>
+
+<!--DESABILITA DIAS PASSADOS E FINAL DE SEMANA-->
         <td class="<?= $classe ?>" <?= $dataCelula && !$disabled ? "data-dia='$dataCelula'" : '' ?>>
         <div class="numero-dia"><?= $diaNumero ?></div>
         <div class="agendamentos-resumo"></div>
@@ -244,7 +255,8 @@ Próximo Mês <i class="fa fa-chevron-right"></i>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Ao carregar a página, para cada dia habilitado, buscar agendamentos resumidos via AJAX
+
+// CARREGA RESUMOS DO AGENDAMENTO VIA AJAX
 document.querySelectorAll('td.dia[data-dia]').forEach(td => {
     const dataDia = td.getAttribute('data-dia');
     fetch('ajax_agenda.php?action=resumo&data=' + dataDia)
@@ -265,7 +277,7 @@ document.querySelectorAll('td.dia[data-dia]').forEach(td => {
     });
 });
 
-// Abrir modal e carregar agendamentos detalhados ao clicar em um dia
+// ABRE MODAL E CARREGA OS AGENDAMENTOS DETALHADOS
 const modalDetalhes = new bootstrap.Modal(document.getElementById('modalDetalhes'));
 document.querySelectorAll('td.dia[data-dia]').forEach(td => {
     td.addEventListener('click', () => {
@@ -285,7 +297,7 @@ document.querySelectorAll('td.dia[data-dia]').forEach(td => {
 });
 
 function attachFormHandlers() {
-    // Formulário para cadastrar novo agendamento
+    // FORMULARIO PARA CADASTRAR AGENDAMENTO
     const formNovo = document.getElementById('form-novo-agendamento');
     if (formNovo) {
         formNovo.addEventListener('submit', e => {
@@ -303,7 +315,7 @@ function attachFormHandlers() {
         });
     }
     
-    // Formularios para excluir
+    // FORMULARIO PARA EXCLUIR
     document.querySelectorAll('.btn-excluir').forEach(btn => {
         btn.addEventListener('click', e => {
             e.preventDefault();
@@ -318,11 +330,12 @@ function attachFormHandlers() {
         });
     });
     
-    // Formularios para editar (mostrar formulario)
+    // ABRE FORMULARIO DE EDITAR
     document.querySelectorAll('.btn-editar').forEach(btn => {
         btn.addEventListener('click', e => {
             e.preventDefault();
             const id = btn.getAttribute('data-id');
+            //VAI PARA O AJAX
             fetch('ajax_agenda.php?action=editar&id=' + id)
             .then(resp => resp.text())
             .then(html => {
@@ -332,7 +345,7 @@ function attachFormHandlers() {
         });
     });
     
-    // Formulario de edição (submissão)
+    // SUBMETER FORMULARIO EDITAR
     const formEditar = document.getElementById('form-editar-agendamento');
     if (formEditar) {
         formEditar.addEventListener('submit', e => {

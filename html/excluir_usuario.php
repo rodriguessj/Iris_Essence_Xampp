@@ -13,7 +13,7 @@
     // Inicializa variável para armazenar usuários
     $usuarios = [];
     
-    // Busca todos os usuários cadastrados em ordem alfabética
+    // BUSCA EM ORDEM ALFABETICA
     $sql = "SELECT * FROM usuario ORDER BY nome ASC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
@@ -26,7 +26,7 @@
         $id_usuario = // Dados recebidos via URL
         $_GET['id'];
         
-        // Exclui o usuário do banco de dados
+        // EXCLUI DO BANCO
         $sql = "DELETE FROM usuario WHERE id_usuario = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':id', $id_usuario, PDO::PARAM_INT);

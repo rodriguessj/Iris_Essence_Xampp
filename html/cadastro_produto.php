@@ -3,10 +3,10 @@
     session_start();
     require_once 'conexao.php';
     
-    //VERIFICA SE USUARIO TEM PERMISSÃO
-    if (!isset($_SESSION['perfil']) || $_SESSION['perfil'] != 1) {
-        echo "<script>alert('Acesso negado!'); window.location.href='principal.php';</script>";
-        exit;
+    //VERIFICA SE USUARIO TEM PERMISSÃO DE ADM 
+    if($_SESSION['perfil'] !=1){
+        echo "<script>alert('Acesso negado!');wiondow.location.href='principal.php';</script>";
+        exit();
     }
     
     if ($_SERVER["REQUEST_METHOD"] == "POST") {

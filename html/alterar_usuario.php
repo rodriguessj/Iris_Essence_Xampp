@@ -4,16 +4,15 @@
 session_start();
 require 'conexao.php';
 
-// Verifica se a variável 'perfil' está configurada corretamente na sessão
-if (!isset($_SESSION['perfil']) || ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2)) {
-    // Caso o perfil não esteja definido ou seja diferente de 1 (Administrador) ou 2 (Gerente), o acesso é negado
-    echo "<script>alert('Acesso negado!'); window.location.href='principal.php';</script>";
-    exit();
-}
+    //VERIFICA SE USUARIO TEM PERMISSÃO DE ADM 
+    if($_SESSION['perfil'] !=1){
+        echo "<script>alert('Acesso negado!');wiondow.location.href='principal.php';</script>";
+        exit();
+    }
 
 $usuario = null;
 
-// Processa alteração de dados se o formulário for enviado
+// PROCESSA ALTERAÇÃO
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_usuario']) && isset($_POST['acao']) && $_POST['acao'] === 'alterar') {
     $id_usuario = $_POST['id_usuario'];
     $nome = trim($_POST['nome']);

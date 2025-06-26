@@ -2,6 +2,7 @@
     // Conexão com o banco de dados
     require_once 'conexao.php';
     
+//BUSCA HORARIOS PARA UM DIA ESPECIFICO
     function fetchHorariosDisponiveis($pdo, $data, $ignorarHora = null) {
         $grade = ["08:00","09:00","10:00","11:00","13:00","14:00","15:00","16:00","17:00"];
         $sql = "SELECT hora FROM agendamentos WHERE data = ?";
@@ -15,12 +16,14 @@
         return array_values(array_diff($grade, $ocupados));
     }
     
-    $action = // Dados recebidos via URL
+//AÇÃO RECEBIDA POR URL
+    $action = 
     $_GET['action'] ?? '';
-    
+  
+//MOSTRA RESUMO DOS AGENDAMENTOS
     switch ($action) {
         case 'resumo':
-        $data = // Dados recebidos via URL
+        $data = 
         $_GET['data'] ?? '';
         if (!$data) {
             echo json_encode([]);
@@ -32,9 +35,10 @@
         $agendamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($agendamentos);
         break;
-        
+ 
+//MOSTRA DATALHES DO AGENDAMENTO
         case 'detalhes':
-        $data = // Dados recebidos via URL
+        $data = 
         $_GET['data'] ?? '';
         if (!$data) {
             echo "Data inválida.";
@@ -45,7 +49,8 @@
         $stmt->execute([$data]);
         $agendamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     ?>
-    
+
+<!--EXIBE OS DETALHES DOS AGENDAMENTOS-->
     <h5>Agendamentos para <?= date('d/m/Y', strtotime($data)) ?></h5>
     
     <table class="table table-striped">
@@ -120,7 +125,8 @@
     
     <?php
         break;
-        
+
+//CADASTRO NOVO AGENDAMENTO
         case 'cadastrar':
         $nome = trim(// Dados enviados via formulário
         $_POST['nome'] ?? '');
@@ -130,17 +136,19 @@
         $_POST['data'] ?? '';
         $hora = // Dados enviados via formulário
         $_POST['hora'] ?? '';
+//VERIFICA SE TODOS OS CAMPOS FORAM PREENCHIDOS
         if ($nome === '' || $procedimento === '' || !$data || !$hora) {
             echo json_encode(['sucesso'=>false, 'msg'=>'Preencha todos os campos corretamente.']);
             exit;
         }
-        // Verifica conflito
+        // VERIFICA SE O HORARIO JA ESTA OCUPADO
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM agendamentos WHERE data = ? AND hora = ?");
         $stmt->execute([$data, $hora]);
         if ($stmt->fetchColumn() > 0) {
             echo json_encode(['sucesso'=>false, 'msg'=>'Horário já ocupado.']);
             exit;
         }
+        //INSERE O NOVO AGENDAMENTO
         $ins = $pdo->prepare("INSERT INTO agendamentos (nome, procedimento, data, hora) VALUES (?, ?, ?, ?)");
         if ($ins->execute([$nome, $procedimento, $data, $hora])) {
             echo json_encode(['sucesso'=>true, 'msg'=>'Agendamento cadastrado com sucesso!']);
@@ -148,7 +156,8 @@
             echo json_encode(['sucesso'=>false, 'msg'=>'Erro ao cadastrar.']);
         }
         break;
-        
+
+//EXCLUI O AGENDAMENTO
         case 'excluir':
         $id = (int)(// Dados recebidos via URL
         $_GET['id'] ?? 0);
@@ -163,7 +172,8 @@
             echo json_encode(['sucesso'=>false, 'msg'=>'Erro ao excluir.']);
         }
         break;
-        
+
+//EDITA O AGENDAMENTO
         case 'editar':
         $id = (int)(// Dados recebidos via URL
         $_GET['id'] ?? 0);
@@ -179,6 +189,8 @@
             exit;
         }
     ?>
+
+<!--EXIBE FORMULARIO DE EDITAR-->
     <h5>Editar Agendamento</h5>
     <form id="form-editar-agendamento">
     <input type="hidden" name="id" value="<?= $ag['id_agendamento'] ?>" />
@@ -210,6 +222,7 @@
     <label for="hora_edit" class="form-label">Hora:</label>
     <select name="hora" id="hora_edit" class="form-select" required>
     <?php
+    //HORARIOS DISPONIVEIS
         $horarios = fetchHorariosDisponiveis($pdo, $ag['data'], substr($ag['hora'],0,5));
         // Coloca o horário atual na lista também
         if (!in_array(substr($ag['hora'],0,5), $horarios)) {
@@ -228,7 +241,8 @@
     </form>
     <?php
         break;
-        
+ 
+//ALTERA AGENDAMENTO(SALVA ALTERAÇÃO)
         case 'alterar':
         $id = (int)(// Dados enviados via formulário
         $_POST['id'] ?? 0);
@@ -253,7 +267,8 @@
             echo json_encode(['sucesso'=>false, 'msg'=>'Horário já ocupado.']);
             exit;
         }
-        
+
+//ATUALIZA AGENDAMENTO NO BANCO DE DADOS
         $upd = $pdo->prepare("UPDATE agendamentos SET nome = ?, procedimento = ?, data = ?, hora = ? WHERE id_agendamento = ?");
         if ($upd->execute([$nome, $procedimento, $data, $hora, $id])) {
             echo json_encode(['sucesso'=>true, 'msg'=>'Agendamento atualizado com sucesso!']);

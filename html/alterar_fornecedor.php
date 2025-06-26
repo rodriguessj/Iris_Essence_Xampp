@@ -2,15 +2,15 @@
 session_start();
 require 'conexao.php';
 
-// Verifica se o usuário tem permissão de ADM ou Gerente
-if (!isset($_SESSION['perfil']) || ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2)) {
-    echo "<script>alert('Acesso negado!'); window.location.href='principal.php';</script>";
-    exit();
-}
+    //VERIFICA SE USUARIO TEM PERMISSÃO DE ADM OU SECRETARIA
+    if($_SESSION['perfil'] !=1 && $_SESSION['perfil'] !=2){
+        echo "<script>alert('Acesso negado!');wiondow.location.href='principal.php';</script>";
+        exit();
+    }
 
 $fornecedor = null;
 
-// Processa alteração
+// PROCESSA ALTERAÇÃO
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_fornecedor'], $_POST['acao']) && $_POST['acao'] === 'alterar') {
     $id_fornecedor = $_POST['id_fornecedor'];
     $nome = trim($_POST['nome']);
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_fornecedor'], $_PO
     }
 }
 
-// Busca fornecedor
+// BUSCA
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['busca_fornecedor']) && (!isset($_POST['acao']) || $_POST['acao'] !== 'alterar')) {
     $busca = trim($_POST['busca_fornecedor']);
 
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['busca_fornecedor']) &
 
 <div class="formulario">
     <fieldset>
-        <!-- Formulário para buscar fornecedor -->
+        <!-- FORMULARIO DE BUSCA-->
         <form action="alterar_fornecedor.php" method="POST">
             <legend>Alterar Fornecedor</legend>
             <label for="busca_fornecedor">Digite o ID ou Nome do fornecedor:</label>
@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['busca_fornecedor']) &
         </form>
 
         <?php if ($fornecedor): ?>
-        <!-- Formulário para alterar fornecedor -->
+        <!-- FORMULARIO PARA ALTERAR -->
         <form action="alterar_fornecedor.php" method="POST">
             <input type="hidden" name="id_fornecedor" value="<?= htmlspecialchars($fornecedor['id_fornecedor']) ?>">
             <input type="hidden" name="acao" value="alterar">

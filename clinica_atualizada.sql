@@ -51,7 +51,8 @@ CREATE TABLE IF NOT EXISTS funcionario (
   endereco VARCHAR(100) NOT NULL,
   email VARCHAR(100) NOT NULL,
   genero VARCHAR(1) NOT NULL,
-  cargo VARCHAR(30) NOT NULL
+  cargo VARCHAR(30) NOT NULL,
+  id_perfil INT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabela: procedimento

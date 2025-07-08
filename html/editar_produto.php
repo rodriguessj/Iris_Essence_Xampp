@@ -112,14 +112,7 @@
 </form>
 </div>
 
-<br><br>
-<footer class="l-footer">
-<p>&copy; 2025 Iris Essence - Beauty Clinic. Todos os direitos reservados.</p>
-<div class="footer-contato">
-<p><i class="fab fa-whatsapp"></i> <a href="https://wa.me/5547997141208" target="_blank">+55 99714-1208</a></p>
-<p><i class="fab fa-instagram"></i> <a href="https://www.instagram.com/irisessence" target="_blank">@irisessence</a></p>
-<p><i class="fas fa-envelope"></i> <a href="mailto:contato@irisessence.com">suporteiris@irisessence.com</a></p>
-</div>
-</footer>
+<br><br><br><br><br>
+<footer class="l-footer">&copy; 2025 Iris Essence - Beauty Clinic. Todos os direitos reservados.</footer>
 </body>
 </html>

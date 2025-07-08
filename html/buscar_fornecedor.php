@@ -1,40 +1,35 @@
 <?php
-    // Conexão com o banco de dados
-    // Inicia a sessão do usuário
-    session_start();
-    require_once 'conexao.php';
-    
-    //VERIFICA SE USUARIO TEM PERMISSÃO DE ADM OU SECRETARIA
-    if($_SESSION['perfil'] !=1 && $_SESSION['perfil'] !=2){
-        echo "<script>alert('Acesso negado!');wiondow.location.href='principal.php';</script>";
-        exit();
-    }
-    
-    $fornecedores = []; //INICIALIZA A VARIAVEL PARA EVITAR ERROS
-    
-    //SE O FORMULÁRIO FOR ENVIADO, BUSCA O USUÁRIO PELO ID OU NOME
-    
-    if ($_SERVER["REQUEST_METHOD"]=="POST" && !empty (// Dados enviados via formulário
-    $_POST['busca'])){
-        $busca = trim(// Dados enviados via formulário
-        $_POST['busca']);
-        
-        //VERIFICA SE A BUSCA É UM NÚMERO(ID) OU UM NOME
-        if (is_numeric($busca)){
-            $sql = "SELECT * FROM fornecedor WHERE id_fornecedor = :busca ORDER BY nome ASC";
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':busca', $busca, PDO::PARAM_INT);
-        }else{
-            $sql = "SELECT * FROM fornecedor WHERE nome LIKE :busca_nome ORDER BY nome ASC";
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindValue(':busca_nome', "%$busca%", PDO::PARAM_STR);
-        }
-    }else{
-        $sql = "SELECT * FROM fornecedor ORDER BY nome ASC";
+require_once 'conexao.php';
+session_start();
+
+// VERIFICA SE A SESSÃO FOI INICIADA CORRETAMENTE E PERFIL ESTÁ DEFINIDO
+if (!isset($_SESSION['perfil']) || ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2)) {
+    echo "<script>alert('Acesso negado!');window.location.href='principal.php';</script>";
+    exit();
+}
+
+$fornecedores = []; //INICIALIZA A VARIAVEL PARA EVITAR ERROS
+
+// SE O FORMULÁRIO FOR ENVIADO, BUSCA O USUÁRIO PELO ID OU NOME
+if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['busca'])) {
+    $busca = trim($_POST['busca']);
+
+    //VERIFICA SE A BUSCA É UM NÚMERO(ID) OU UM NOME
+    if (is_numeric($busca)){
+        $sql = "SELECT * FROM fornecedor WHERE id_fornecedor = :busca ORDER BY nome ASC";
         $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':busca', $busca, PDO::PARAM_INT);
+    } else {
+        $sql = "SELECT * FROM fornecedor WHERE nome LIKE :busca_nome ORDER BY nome ASC";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':busca_nome', "%$busca%", PDO::PARAM_STR);
     }
-    $stmt->execute();
-    $fornecedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    $sql = "SELECT * FROM fornecedor ORDER BY nome ASC";
+    $stmt = $pdo->prepare($sql);
+}
+$stmt->execute();
+$fornecedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +37,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Íris &ssence - Beauty Clinic</title>
+<title>Íris Essence - Beauty Clinic</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="../css/style.css">
@@ -78,13 +73,14 @@
                     <a href="../html/massagemrelaxante.html">Massagem Relaxante</a>
                 </div>
             </li>
-            <li><a href="../html/produtos.html">PRODUTOS</a></li>|
-            <li><a href="../html/login.php">LOGIN</a></li>|
-            <li><a href="../html/cadastro.html">CADASTRO</a></li>|
+            <li><a href="../html/produtos.html">PRODUTOS</a></li>
+            <li><a href="../html/login.php">LOGIN</a></li>
+            <li><a href="../html/cadastro.html">CADASTRO</a></li>
 
             <div class="logout">
-                <form action = "logout.php" method= "POST">
-                <button type="submit">Logout</button>
+                <form action="logout.php" method="POST">
+                    <button type="submit">Logout</button>
+                </form>
             </div>
         </ul>
     </nav>
@@ -103,7 +99,7 @@
 <button type="submit">Pesquisar</button>
 </form>
 
-<?php if(!empty($fornecedores)):?>
+<?php if(!empty($fornecedores)): ?>
 <table border="1">
 <tr>
 <th>ID</th>
@@ -111,6 +107,7 @@
 <th>Endereço</th>
 <th>Telefone</th>
 <th>Produto</th>
+<th>Ações</th>
 </tr>
 <?php foreach($fornecedores as $fornecedor): ?>
 <tr>
@@ -120,8 +117,8 @@
 <td><?=htmlspecialchars($fornecedor['telefone']) ?></td>
 <td><?=htmlspecialchars($fornecedor['produto']) ?></td>
 <td>
-<a href = "alterar_fornecedor.php?id=<?=htmlspecialchars($fornecedor['id_fornecedor']) ?>">✏️</a>
-<a href = "excluir_fornecedor.php?id=<?=htmlspecialchars($fornecedor['id_fornecedor']) ?>"onclick="return confirm('Tem certeza que deseja excluir este fornecedor')">🗑️</a>
+<a href="alterar_fornecedor.php?id=<?=htmlspecialchars($fornecedor['id_fornecedor']) ?>">✏️</a>
+<a href="excluir_fornecedor.php?id=<?=htmlspecialchars($fornecedor['id_fornecedor']) ?>" onclick="return confirm('Tem certeza que deseja excluir este fornecedor?')">🗑️</a>
 </td>
 </tr>
 <?php endforeach; ?>

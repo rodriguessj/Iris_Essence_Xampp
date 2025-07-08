@@ -2,11 +2,12 @@
 require_once 'conexao.php';
 session_start();
 
-// VERIFICA SE USUÁRIO TEM PERMISSÃO DE ADM OU SECRETARIA
-if ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2) {
+// VERIFICA SE A SESSÃO FOI INICIADA CORRETAMENTE E PERFIL ESTÁ DEFINIDO
+if (!isset($_SESSION['perfil']) || ($_SESSION['perfil'] != 1 && $_SESSION['perfil'] != 2)) {
     echo "<script>alert('Acesso negado!');window.location.href='principal.php';</script>";
     exit();
 }
+
 
 $clientes = []; // INICIALIZA A VARIAVEL PARA EVITAR ERROS
 

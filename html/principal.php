@@ -27,26 +27,30 @@
     "cadastro_usuario.php",
     "cadastro_cliente.php",
     "cadastro_fornecedor.php",
-    "cadastro_funcionario.php"
+    "cadastro_funcionario.php",
+    "cadastro_procedimento.php"
     ],
     
     "Buscar" =>[
     "buscar_usuario.php",
     "buscar_cliente.php",
     "buscar_fornecedor.php",
-    "buscar_funcionario.php"],
+    "buscar_funcionario.php",
+    "buscar_procedimento.php"],
     
     "Alterar" =>[
     "alterar_usuario.php",
     "alterar_cliente.php",
     "alterar_fornecedor.php",
-    "alterar_funcionario.php"],
+    "alterar_funcionario.php",
+    "alterar_procedimento.php"],
     
     "Excluir" =>[
     "excluir_usuario.php",
     "excluir_cliente.php",
     "excluir_fornecedor.php",
-    "excluir_funcionario.php"],
+    "excluir_funcionario.php",
+    "excluir_procedimento.php"],
     
     "Agenda" =>[
     "agenda_completa.php",

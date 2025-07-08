@@ -151,7 +151,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['busca_cliente']) && (!
             <input type="date" id="data_nascimento" name="data_nascimento" value="<?= htmlspecialchars($cliente['data_nascimento']) ?>" required>
 
             <label for="genero">Gênero:</label>
-            <input type="text" id="genero" name="genero" value="<?= htmlspecialchars($cliente['genero']) ?>" required>
+                <select id="genero" name="genero" required>
+                    <option value="M">Homem</option>
+                    <option value="F">Mulher</option>
+                </select>
 
             <div class="botoes">
                 <button class="botao_cadastro" type="submit">Alterar</button>

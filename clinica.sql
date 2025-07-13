@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS cliente (
   data_nascimento DATE NOT NULL,
   senha varchar(16) NOT NULL,
   genero VARCHAR(1) NOT NULL,
-  id_perfil INT DEFAULT NULL
+  id_perfil INT DEFAULT NULL,
+  FOREIGN KEY (id_perfil) REFERENCES perfil(id_perfil)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabela: fornecedor
@@ -50,7 +51,9 @@ CREATE TABLE IF NOT EXISTS funcionario (
   endereco VARCHAR(100) NOT NULL,
   email VARCHAR(100) NOT NULL,
   genero VARCHAR(1) NOT NULL,
-  cargo VARCHAR(30) NOT NULL
+  id_cargo  INT NOT NULL,
+  id_perfil INT NOT NULL,
+  id_procedimento INT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabela: procedimento
@@ -71,11 +74,18 @@ CREATE TABLE IF NOT EXISTS procedimento (
 
 -- Tabela: agendamento
 CREATE TABLE agendamentos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_agendamento INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     procedimento VARCHAR(100) NOT NULL,
     data DATE NOT NULL,
-    hora TIME NOT NULL
+    hora TIME NOT NULL,
+    id_funcionario int not null
+);
+
+-- Tabela: cargo
+CREATE TABLE cargo (
+    id_cargo INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
 );
 
 -- Inserindo perfis
@@ -86,6 +96,11 @@ VALUES ('administrador'), ('recepcionista'), ('cliente');
 INSERT INTO usuario (nome, senha, email, id_perfil)
 VALUES ('julia silva', 'julia123', 'julia@julia', 1);
 
-select * from cliente;
-select * from usuario;
-select * from agendamentos;
+INSERT INTO usuario (nome, senha, email, id_perfil)
+VALUES ('giovana', '12345678', 'giovana@giovana', 1);
+
+INSERT INTO cargo (nome)
+VALUES ('esteticista'),
+('recepcionista'),
+('administrador');
+

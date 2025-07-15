@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['busca'])) {
                 WHERE f.nome LIKE :busca_nome
                 ORDER BY f.nome ASC";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindValue(':busca_nome', "%$busca%", PDO::PARAM_STR);
+        $stmt->bindValue(':busca_nome', "$busca%", PDO::PARAM_STR);
     }
 } else {
     $sql = "SELECT f.*, c.nome AS nome_cargo, p.nome AS nome_procedimento
